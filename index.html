@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Director Name Quiz</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f5f7;color:#1f2937;touch-action:manipulation}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 14px 28px}
+  .card{background:#fff;border-radius:22px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.10)}
+  h1{font-size:25px;margin:4px 0 10px;text-align:center}.sub{text-align:center;color:#6b7280;margin:0 0 14px;font-size:15px}
+  .top{display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px;font-weight:700}.pill{background:#eef2ff;padding:9px 12px;border-radius:999px}
+  img{width:100%;max-height:340px;object-fit:contain;background:#f8fafc;border-radius:16px;border:1px solid #e5e7eb;display:block;margin:0 auto 16px}
+  .options{display:grid;gap:12px}.btn{width:100%;min-height:58px;border:0;border-radius:16px;padding:13px 12px;font-size:17px;font-weight:700;background:#111827;color:#fff;cursor:pointer;text-align:center}.btn:active{transform:scale(.985)}
+  .btn.option{background:#fff;color:#111827;border:2px solid #d1d5db}.btn.correct{background:#16a34a;color:#fff;border-color:#16a34a}.btn.wrong{background:#dc2626;color:#fff;border-color:#dc2626}.btn:disabled{opacity:.9}
+  .next{margin-top:14px;background:#2563eb;display:none}.result{text-align:center;padding:22px 8px}.score{font-size:54px;font-weight:800;margin:12px 0;color:#111827}.small{color:#6b7280;line-height:1.45}.restart{margin-top:18px;background:#111827}
+  @media (min-width:700px){.options{grid-template-columns:1fr 1fr}.btn{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card" id="app"></div></div>
+<script>
+const people = [
+ {name:'Pol.Gen. Rungroj Sangkram', image:'assets/person_01.jpg'},
+ {name:'Mr. Yuthasak Supasorn', image:'assets/person_02.jpg'},
+ {name:'Mr. Prapakon Thongtheppairot', image:'assets/person_03.jpg'},
+ {name:'Mr. Soammaphat Traisorat', image:'assets/person_04.jpg'},
+ {name:'Mrs. Wallapa Traisorat', image:'assets/person_05.jpg'},
+ {name:'Mr. Pongpanu Svetarundra', image:'assets/person_06.jpg'},
+ {name:'Mr. Kalin Sarasin', image:'assets/person_07.jpg'},
+ {name:'Mr. Vachara Tuntariyanond', image:'assets/person_08.jpg'},
+ {name:'Associate Prof. Titiphan Chuerboonchai', image:'assets/person_09.jpg'},
+ {name:'Mr. Santi Pongjareanpit', image:'assets/person_10.jpg'},
+ {name:'Dr. Sutapa Amornvivat', image:'assets/person_11.jpg'},
+ {name:'Mr. Boontuck Wungcharoen', image:'assets/person_12.jpg'},
+ {name:'Mr. Rungson Sriworasat', image:'assets/person_13.jpg'},
+ {name:'Mrs. Nuntawan Sakuntanaga', image:'assets/person_14.jpg'}
+];
+let order=[], current=0, score=0, answered=false;
+const app=document.getElementById('app');
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function start(){order=shuffle(people); current=0; score=0; answered=false; renderQuestion()}
+function choices(correct){let wrong=shuffle(people.filter(p=>p.name!==correct.name)).slice(0,3).map(p=>p.name); return shuffle([correct.name,...wrong])}
+function renderQuestion(){answered=false; const p=order[current];
+ app.innerHTML=`<h1>Director Name Quiz</h1><p class="sub">ดูรูป แล้วเลือกชื่อที่ถูกต้อง</p><div class="top"><span class="pill">Question ${current+1}/14</span><span class="pill">Score ${score}</span></div><img src="${p.image}" alt="quiz image"><div class="options">${choices(p).map(c=>`<button class="btn option" onclick="answer(this,'${c.replaceAll("'","&#39;")}')">${c}</button>`).join('')}</div><button class="btn next" id="nextBtn" onclick="next()">Next</button>`;
+}
+function answer(btn, selected){if(answered)return; answered=true; const correct=order[current].name; if(selected===correct){score++; btn.classList.add('correct')} else {btn.classList.add('wrong'); [...document.querySelectorAll('.option')].find(b=>b.textContent===correct).classList.add('correct')} [...document.querySelectorAll('.option')].forEach(b=>b.disabled=true); document.getElementById('nextBtn').style.display='block'}
+function next(){current++; if(current>=order.length) renderResult(); else renderQuestion()}
+function renderResult(){app.innerHTML=`<div class="result"><h1>Quiz Completed</h1><div class="score">${score}/14</div><p class="small">คุณตอบถูก ${score} ข้อ จากทั้งหมด 14 ข้อ</p><button class="btn restart" onclick="start()">Play Again</button></div>`}
+start();
+</script>
+</body>
+</html>
